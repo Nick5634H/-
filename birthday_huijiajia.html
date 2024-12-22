@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐！</title>
+    <link rel="stylesheet" href="normalize.css">
+    <style>
+        .birthday-message {
+            text-align: center;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 2s ease forwards;
+        }
+        
+        h1 {
+            color: #FF1493;  /* 使用粉红色主题 */
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        .message {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #666;
+            margin: 15px 0;
+            opacity: 0;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message:nth-child(1) { animation: fadeIn 2s ease forwards 1s; }
+        .message:nth-child(2) { animation: fadeIn 2s ease forwards 3s; }
+        .message:nth-child(3) { animation: fadeIn 2s ease forwards 5s; }
+        .message:nth-child(4) { animation: fadeIn 2s ease forwards 7s; }
+        
+        /* 添加花朵背景 */
+        .flowers {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* 添加音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            z-index: 100;
+            cursor: pointer;
+            font-size: 24px;
+            color: #FF1493;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 添加烟花容器样式 */
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+
+        .firework-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            color: #fff;
+            text-shadow: 0 0 10px #ff0,
+                         0 0 20px #ff0,
+                         0 0 30px #ff0;
+            opacity: 0;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        @keyframes textFadeIn {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="music-control" onclick="toggleMusic()">🎵</div>
+    <audio id="bgMusic" loop autoplay>
+        <source src="https://music.163.com/song/media/outer/url?id=1387581250.mp3" type="audio/mpeg">
+    </audio>
+    <div class="flowers"></div>
+    <div class="birthday-message">
+        <h1>✨ 生日快乐，惠佳佳 ✨</h1>
+        <p class="message">十二月的暖阳里，</p>
+        <p class="message">愿你被世界温柔以待，</p>
+        <p class="message">愿你的生活充满色彩，</p>
+        <p class="message">愿你所有的梦想都开花结果。🌸</p>
+    </div>
+
+    <div class="fireworks-container"></div>
+    <div class="firework-text">生日快乐</div>
+
+    <script>
+        window.onload = function() {
+            const audio = document.getElementById('bgMusic');
+            audio.volume = 0.8; // 调高音量到80%
+            audio.play(); // 自动播放
+            
+            function createFlower() {
+                const flower = document.createElement('div');
+                flower.innerHTML = '🌸';
+                flower.style.position = 'fixed';
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.top = '100vh';
+                flower.style.fontSize = (Math.random() * 15 + 8) + 'px';
+                flower.style.animation = `float ${Math.random() * 3 + 2}s linear infinite`;
+                document.querySelector('.flowers').appendChild(flower);
+                
+                setTimeout(() => flower.remove(), 5000);
+            }
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    to {
+                        transform: translateY(-100vh) rotate(360deg);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            setInterval(createFlower, 300);
+
+            // 在所有消息显示完后（7秒后）显示烟花
+            setTimeout(() => {
+                const container = document.querySelector('.fireworks-container');
+                const text = document.querySelector('.firework-text');
+                container.style.opacity = '1';
+                
+                // 创建烟花效果
+                function createFirework() {
+                    const firework = document.createElement('div');
+                    firework.style.position = 'absolute';
+                    firework.style.left = Math.random() * 100 + 'vw';
+                    firework.style.top = Math.random() * 100 + 'vh';
+                    firework.style.transform = 'translate(-50%, -50%)';
+                    firework.style.width = '4px';
+                    firework.style.height = '4px';
+                    firework.style.borderRadius = '50%';
+                    firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    firework.style.boxShadow = `0 0 ${Math.random() * 50 + 30}px ${Math.random() * 20 + 10}px currentColor`;
+                    
+                    container.appendChild(firework);
+                    
+                    // 烟花爆炸动画
+                    const angle = Math.random() * Math.PI * 2;
+                    const velocity = Math.random() * 50 + 30;
+                    const lifetime = Math.random() * 1000 + 1000;
+                    let opacity = 1;
+                    
+                    const animation = firework.animate([
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                        { transform: `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: lifetime,
+                        easing: 'cubic-bezier(0,0,0.2,1)'
+                    });
+                    
+                    animation.onfinish = () => firework.remove();
+                }
+
+                // 持续创建烟花
+                const fireworkInterval = setInterval(createFirework, 50);
+
+                // 显示文字
+                setTimeout(() => {
+                    text.style.opacity = '1';
+                    text.style.animation = 'textFadeIn 2s forwards';
+                }, 1000);
+
+                // 30秒后停止创建新的烟花
+                setTimeout(() => {
+                    clearInterval(fireworkInterval);
+                }, 30000);
+            }, 7000); // 等待原有动画完成后开始烟花
+        };
+
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const musicControl = document.querySelector('.music-control');
+            
+            if (audio.paused) {
+                audio.play();
+                musicControl.style.animationPlayState = 'running';
+            } else {
+                audio.pause();
+                musicControl.style.animationPlayState = 'paused';
+            }
+        }
+    </script>
+</body>
+</html> 
